@@ -1,0 +1,18 @@
+# /etc/systemd/system/emas-web.service  —  sudo systemctl enable --now emas-web
+[Unit]
+Description=EMAS web app
+After=network.target
+
+[Service]
+User=emas
+WorkingDirectory=/opt/emas-web
+EnvironmentFile=/opt/emas-web/.env
+Environment=NODE_ENV=production PORT=3000 HOSTNAME=127.0.0.1
+ExecStart=/usr/local/bin/bun .next/standalone/server.js
+Restart=on-failure
+NoNewPrivileges=true
+ProtectSystem=full
+ReadWritePaths=/var/lib/emas
+
+[Install]
+WantedBy=multi-user.target

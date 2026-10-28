@@ -1,0 +1,179 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ===== STAFF & ROLES =====
+
+model StaffRole {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  roles     String   // comma-separated: Triage,EventPlanning,Dashboard,Admin
+  active    Boolean  @default(true)
+  notes     String   @default("")
+  passwordHash String @default("")          // scrypt hash; empty = cannot sign in
+  mustChangePassword Boolean @default(true) // forced change after admin sets/reset a password
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===== EVENT RECORDS =====
+
+model EventRecord {
+  id                String   @id @default(cuid())
+  submissionDate    DateTime @default(now())
+  submittedBy       String   // email of submitter
+
+  // Event Profile
+  eventName         String
+  district          String
+  eventType         String
+  environment       String
+  venue             String
+  crowdType         String
+  expectedAttendance Int     @default(0)
+  dateOfCover       String
+
+  // Risk & Referral (auto)
+  nearestHospital   String   @default("")
+  backupHospital    String   @default("")
+  calculatedRiskScore Float   @default(0)
+  specialEquipment  String   @default("")
+  recommendedTier   String   @default("")
+  selectedTier      String   @default("")
+  complianceCheck   String   @default("")
+
+  // Manpower Plan
+  doctorsPlanned      Int    @default(0)
+  paramedicsPlanned   Int    @default(0)
+  nursesPlanned       Int    @default(0)
+  driversPlanned      Int    @default(0)
+  ssNgoPlanned        Int    @default(0)
+  ssMindefPlanned     Int    @default(0)
+  totalManpowerPlanned Int   @default(0)
+
+  // Team & Unit Deployment (v1.2)
+  walkingTeamCount      Int  @default(0)
+  walkingTeamManpower   Int  @default(2)
+  clinicPublicCount     Int  @default(0)
+  clinicPublicManpower  Int  @default(3)
+  clinicVvipCount       Int  @default(0)
+  clinicVvipManpower    Int  @default(4)
+  ambulanceTeamCount    Int  @default(0)
+  ambulanceTeamManpower Int  @default(3)
+  victorTeamCount       Int  @default(0)
+  victorTeamManpower    Int  @default(3)
+  supportVehicleCount   Int  @default(0)
+  supportVehicleManpower Int @default(2)
+  manpowerOverall       Int  @default(0)
+  manpowerVariance      Int  @default(0)
+
+  // Mission Times (renamed from Mission Time to Medical Coverage Time in v1.2)
+  clockInTime       String   @default("")
+  eventStartTime    String   @default("")
+  standdownTime     String   @default("")
+  finalClockOutTime String   @default("")
+  missionDuration   String   @default("")
+  activeDutyDuration String  @default("")
+
+  // Actual Staffing
+  doctorsActual      Int    @default(0)
+  paramedicsActual   Int    @default(0)
+  nursesActual       Int    @default(0)
+  driversActual      Int    @default(0)
+  ssNgoActual        Int    @default(0)
+  ssMindefActual     Int    @default(0)
+  staffingVariance   Int    @default(0)
+
+  // Patient Summary (auto)
+  totalPatientsAttended Int  @default(0)
+  hospitalTransportCases Int @default(0)
+
+  // Notes
+  operationalNotes String   @default("")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  triageRecords TriageRecord[]
+}
+
+// ===== TRIAGE RECORDS =====
+
+model TriageRecord {
+  id              String   @id @default(cuid())
+  timestamp       DateTime @default(now())
+  submittedBy     String   // email of submitter
+  eventId         String
+  event           EventRecord @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  // Event & Staff
+  eventDescription String  @default("")
+  venueType       String  @default("")
+  caseIndex       String  @default("")
+  triageTime      String  @default("")
+  providerRole    String  @default("")
+  assignmentLocation String @default("")
+
+  // Patient Demographics
+  patientName     String  @default("")
+  age             Int     @default(0)
+  gender          String  @default("")
+  affiliation     String  @default("")
+  nokContact      String  @default("")
+
+  // Clinical Presentation
+  mentalStatus    String  @default("")
+  triagePriority  String  @default("") // P1, P2, P3
+  presentingComplaint String @default("")
+  painScale       Int     @default(0)
+
+  // Primary Assessment
+  temperature     String  @default("")
+  bloodPressure   String  @default("")
+  pulse           String  @default("")
+  glucose         String  @default("")
+  spo2            String  @default("")
+  oxygenSupport   String  @default("")
+  ecgTraumaFindings String @default("")
+
+  // Management & Outcome
+  actionsTaken    String  @default("")
+  treatmentResponse String @default("")
+  finalOutcome    String  @default("")
+  dispositionTime String  @default("")
+  hospitalTransport Boolean @default(false)
+  transferHospital String  @default("")
+
+  // Medications (JSON array)
+  medications     String  @default("[]")
+
+  // Doctor's Report
+  verifiedCaseIndex String @default("")
+  doctorNotes     String  @default("")
+  treatmentPlan   String  @default("")
+  followUpManagement String @default("")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+// ===== AUDIT LOG (append-only; written by the server, readable by Admin only) =====
+model AuditLog {
+  id     String   @id @default(cuid())
+  at     DateTime @default(now())
+  actor  String   // staff email (or the e-mail attempted on a failed sign-in)
+  action String   // e.g. auth.login, staff.save, event.create, triage.view
+  target String   @default("")
+  detail String   @default("")  // never contains passwords or patient-identifying data
+  ip     String   @default("")
+
+  @@index([at])
+  @@index([actor])
+}

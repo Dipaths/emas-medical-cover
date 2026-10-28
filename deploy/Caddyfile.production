@@ -1,0 +1,11 @@
+# Production reverse proxy: automatic HTTPS (Let's Encrypt) for your domain.
+# Set EMAS_DOMAIN in the environment, e.g.  EMAS_DOMAIN=emas.example.org caddy run --config Caddyfile.production
+{$EMAS_DOMAIN} {
+	encode gzip
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		-Server
+	}
+	# Digital Asset Links for the Android app (see android README) is served from public/.well-known/ by Next.js.
+	reverse_proxy 127.0.0.1:3000
+}

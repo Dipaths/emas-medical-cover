@@ -1,0 +1,1 @@
+{"compilerOptions":{"baseUrl":"..","paths":{"@/lib/db":["test-shims/db.ts"],"@/*":["src/*"]},"module":"esnext","target":"es2022","moduleResolution":"bundler","esModuleInterop":true}}
