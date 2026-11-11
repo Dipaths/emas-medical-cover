@@ -5,7 +5,6 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Siren } from 'lucide-react'
 
 export interface SessionUser { email: string; name: string; roles: string[]; mustChangePassword: boolean }
 
@@ -16,7 +15,7 @@ function Shell({ title, children }: { title: string; children: React.ReactNode }
     <div className="min-h-screen flex items-center justify-center px-4" style={{ background: `linear-gradient(135deg, ${NAVY}, ${TEAL})` }}>
       <Card className="w-full max-w-md shadow-2xl">
         <CardHeader className="text-center space-y-2">
-          <div className="mx-auto flex items-center justify-center w-12 h-12 rounded-lg" style={{ background: NAVY }}><Siren className="w-7 h-7 text-white" /></div>
+          <img src="/logo.png" alt="EMAS" className="mx-auto w-16 h-16 rounded-full" />
           <CardTitle className="text-xl" style={{ color: NAVY }}>EMAS Medical Cover</CardTitle>
           <p className="text-sm text-gray-500">{title}</p>
         </CardHeader>

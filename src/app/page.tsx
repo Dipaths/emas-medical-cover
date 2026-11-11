@@ -427,7 +427,7 @@ export default function Home() {
           {/* Branding */}
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-white/20 backdrop-blur">
-              <Siren className="w-6 h-6 text-white" />
+              <img src="/logo.png" alt="EMAS" className="w-9 h-9 rounded-full bg-white" />
             </div>
             <div>
               <h1 className="text-white font-bold text-base sm:text-lg leading-tight tracking-wide">EMAS Medical Cover</h1>
