@@ -41,4 +41,4 @@ Staff management: sign in as an Admin and open the **Staff** tab to add people, 
 ## Known gaps
 * Audit entries live in the same database; ship/back them up off-box if you need tamper-resistance. Patient data sits unencrypted in `db/custom.db` — protect/back up the host disk accordingly.
 * Throttling is per process (resets on restart; not shared across instances).
-* The page header shows hotline 995; the triage form elsewhere in this package shows +673 888 5920 — confirm which is correct.
+* The hotline shown in the page header is 991 (confirmed by the EMAS owner).

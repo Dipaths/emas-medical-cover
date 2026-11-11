@@ -442,7 +442,7 @@ export default function Home() {
               <span className="font-mono text-sm font-semibold">{clock}</span>
             </div>
             <Badge className="bg-red-600 text-white hover:bg-red-700 px-3 py-1 text-xs font-bold shadow-md">
-              <Phone className="w-3 h-3 mr-1" /> HOTLINE 995
+              <Phone className="w-3 h-3 mr-1" /> HOTLINE 991
             </Badge>
           </div>
 
